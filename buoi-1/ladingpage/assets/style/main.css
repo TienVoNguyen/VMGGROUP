@@ -1,0 +1,188 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-family: "Lato", sans-serif;
+}
+
+body {
+    margin: 0;
+    line-height: 1.5;
+    font-weight: 400;
+    font-size: 1rem;
+    font-family: "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    background-image: url(../images/polygon.png);
+    background-position: -500px -1585px;
+    background-repeat: no-repeat;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-weight: 400;
+    margin: 10px 0;
+    color: black;
+}
+
+#neubar {
+    background: #1C63FB;
+    position: fixed ;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
+  }
+
+a {
+    color: gray !important;
+}
+
+.nav-item .active {
+    /* color: #1C63FB !important; */
+  }
+
+#neubar a:hover {
+    color: #d31b1b !important
+  }
+
+#neubar .nav-item {
+    margin : auto 4px;
+  }
+
+#neubar a {
+
+    padding-left:12px;
+    padding-right:12px;
+  }
+
+a.navbar-brand {
+    color: #454545
+  }
+
+.site-section {
+    padding: 4.5em 0;
+}
+
+.btn-buy:hover {
+    color: #fff !important;
+    background-color: #1C63FB;
+    border: #fff solid 2px;
+}
+
+img {
+    vertical-align: middle;
+    border-style: none;
+}
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
+
+.heading {
+    text-transform: uppercase;
+    position: relative;
+    padding-bottom: 30px;
+    margin-bottom: 30px;
+}
+
+.heading:after {
+    content: "";
+    position: absolute;
+    width: 50px;
+    height: 2px;
+    background: #1C63FB;
+    bottom: 0;
+    left: 0;
+}
+
+.card-body .wrap-icon {
+    width: 60px;
+    height: 60px;
+    display: block;
+    border: 1px solid #1C63FB;
+    border-radius: 50%;
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.card-body .wrap-icon > i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    font-size: 30px;
+    color: #1C63FB;
+}
+
+#features-section .card {
+    border: 1px solid #eee;
+    border-top: 2px solid #1C63FB;
+}
+
+#features-section .card:hover {
+    -webkit-box-shadow: 0 10px 30px -10px rgb(0 0 0 / 40%);
+    box-shadow: 0 10px 30px -10px rgb(0 0 0 / 40%);
+    border: 1px solid transparent;
+    border-top: 2px solid #1C63FB;
+    top: -2px;
+}
+.author-img {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url(../images/author_1.jpg);
+}
+
+.input-email {
+    margin-right: 3rem;
+    height: 3rem;
+}
+
+.btn-email:hover {
+    background-color: #1C63FB;
+    border: #fff solid 2px;
+    color: #fff;
+
+}
+
+.site-footer{
+    padding-top: 17rem;
+    padding-bottom: 4rem;
+    background: #333333;
+}
+
+.site-footer p {
+    color: #8c8c8c;
+}
+
+a {
+    text-decoration: none;
+}
+
+.site-footer input, textarea {
+    color: #fff;
+    border-color: #333333 !important;
+    background: #4d4d4d !important;
+    border-radius: 2rem;
+}
+
+.txt-area {
+    border-radius: 2rem;
+}
+
+#contact-section button:hover {
+    border: solid #1C63FB 2px;
+    color: #1C63FB;
+    background-color: #000;
+}
