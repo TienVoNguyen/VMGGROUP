@@ -34,7 +34,6 @@ public class UserController {
         if (result.hasErrors()) {
             return "add-user";
         }
-
         userRepository.save(user);
         return "redirect:/index";
     }
