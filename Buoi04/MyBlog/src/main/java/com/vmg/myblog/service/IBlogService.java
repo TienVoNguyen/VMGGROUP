@@ -1,13 +1,14 @@
 package com.vmg.myblog.service;
 
 import com.vmg.myblog.model.Blog;
+import com.vmg.myblog.model.BlogDTO;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IBlogService {
-    Blog save(Blog blog);
+    BlogDTO save(BlogDTO blog);
     void delete(long[] ids);
-    void delete(Long id);
-
-    List<Blog> findAll();
+    List<BlogDTO> findAll();
+    Blog findById(Long id);
 }

@@ -1,10 +1,20 @@
 package com.vmg.myblog.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
+import java.util.List;
 
 @Entity
-public class Blog {
+@Data
+@Getter
+@Setter
+public class Blog implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -12,42 +22,11 @@ public class Blog {
     @Column
     @NotBlank(message = "Title is empty")
     private String title;
-
-    @Column(columnDefinition = "TEXT")
+    @Column
     private String cover;
-
     @Column(columnDefinition = "TEXT")
     private String content;
+    @ManyToOne
+    private Category category;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getCover() {
-        return cover;
-    }
-
-    public void setCover(String cover) {
-        this.cover = cover;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
 }
