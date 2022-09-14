@@ -22,7 +22,6 @@ public class FileManagerService {
         if(!dir.exists()) {
             dir.mkdirs();
         }
-        System.out.println(dir.getAbsolutePath());
         return Paths.get(dir.getAbsolutePath(), filename);
     }
 

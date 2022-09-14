@@ -1,11 +1,10 @@
 package com.vmg.myblog.service.impl;
 
-import com.vmg.myblog.model.Blog;
-import com.vmg.myblog.model.BlogDTO;
-import com.vmg.myblog.model.Category;
+import com.vmg.myblog.model.*;
 import com.vmg.myblog.repository.IBlogRepository;
 import com.vmg.myblog.service.IBlogService;
 import com.vmg.myblog.service.ICategoryService;
+import com.vmg.myblog.service.IImageBlogService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,21 +22,32 @@ public class BlogService implements IBlogService {
     ICategoryService categoryService;
     @Autowired
     private ModelMapper modelMapper;
-
     @Autowired
     FileManagerService fileManagerService;
+    @Autowired
+    IImageBlogService imageBlogService;
 
     @Override
-    public BlogDTO save(BlogDTO blogDTO) {
+    public BlogDTO save(BlogForm blogForm) {
+        BlogDTO blogDTO = modelMapper.map(blogForm, BlogDTO.class);
+        List<String> filenames = fileManagerService.save("images", blogForm.getCover());
         Blog blog = convertToModel(blogDTO);
         blog = blogRepository.save(blog);
+        for (String filename:filenames) {
+            imageBlogService.save(filename, blog);
+        }
         return convertToDTO(blog);
     }
 
     @Override
     public void delete(long[] ids) {
         for (long id:ids) {
-            fileManagerService.delete("images", String.valueOf(this.findById(id).getCover()));
+//            fileManagerService.delete("images", String.valueOf(this.findById(id).getCover()));
+            Blog blog = blogRepository.getReferenceById(id);
+            for (ImageBlog imageBlog:blog.getImageBlogs()) {
+                fileManagerService.delete("images", imageBlog.getImageName());
+                imageBlogService.delete(imageBlog);
+            }
             blogRepository.deleteById(id);
         }
     }
@@ -47,7 +57,13 @@ public class BlogService implements IBlogService {
         List<BlogDTO> blogDTOList = new ArrayList<>();
         List<Blog> blogList = blogRepository.findAll();
         for(Blog blog: blogList) {
-            blogDTOList.add((convertToDTO(blog)));
+            BlogDTO blogDTO = convertToDTO(blog);
+            List<String> images = new ArrayList<>();
+            for (ImageBlog imageBlog: blog.getImageBlogs()) {
+                images.add(imageBlog.getImageName());
+            }
+            blogDTO.setImages(images);
+            blogDTOList.add(blogDTO);
         }
         return blogDTOList;
     }
@@ -68,11 +84,29 @@ public class BlogService implements IBlogService {
         Blog blog = modelMapper.map(blogDTO, Blog.class);
         if (blogDTO.getId() != null) {
             Blog oldBlog = blogRepository.getReferenceById(blogDTO.getId());
-            fileManagerService.delete("images", oldBlog.getCover());
+            for(ImageBlog imageBlog: oldBlog.getImageBlogs()) {
+                fileManagerService.delete("images", imageBlog.getImageName());
+            }
             blog.setId(oldBlog.getId());
         }
         Category category = categoryService.findById(blogDTO.getCategoryId());
         blog.setCategory(category);
         return blog;
+    }
+
+    @Override
+    public List<BlogDTO> findByCategory(Long id) {
+        List<BlogDTO> blogDTOList = new ArrayList<>();
+        List<Blog> blogList = blogRepository.findByCategoryId(id);
+        for(Blog blog: blogList) {
+            BlogDTO blogDTO = convertToDTO(blog);
+            List<String> images = new ArrayList<>();
+            for (ImageBlog imageBlog: blog.getImageBlogs()) {
+                images.add(imageBlog.getImageName());
+            }
+            blogDTO.setImages(images);
+            blogDTOList.add(blogDTO);
+        }
+        return blogDTOList;
     }
 }

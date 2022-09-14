@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th = "http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Blogs</title>
@@ -9,10 +9,22 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
-<div th:switch="${blogs}" class="container mt-3">
-    <h2 th:case="null" >No users yet!</h2>
-    <div th:case="*" class="table-responsive">
-        <table class="table table-bordered table-hover">
+<div class="container mt-3">
+    <h2 th:if="${blogs.size()} == 0">No blogs yet!</h2>
+    <div th:if="${blogs.size()} != 0">
+        <select id="categories" class="form-select">
+            <option value="">Choose category</option>
+            <option th:each="category : ${categories}"
+                    th:value="${category.id}"
+            >[[${category.name}]]
+            </option>
+        </select>
+        <br>
+        <button type="button" id="search" onclick="search()" class="btn btn-info">Tìm kiếm</button>
+        <br>
+    </div>
+    <div class="table-responsive">
+        <table th:if="${blogs.size()} != 0" class="table table-bordered table-hover">
             <thead class="table-success">
             <tr>
                 <th>Check</th>
@@ -24,26 +36,26 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="blog : ${blogs}" >
+            <tr th:each="blog : ${blogs}">
                 <td>
                     <input type="checkbox" th:id="|checkbox_${blog.id}|"
                            th:value="${blog.id}">
                 </td>
                 <td th:each="category: ${categories}"
                     th:if="${blog.categoryId} == ${category.id}"
-                >[[${category.name}]]</td>
+                >[[${category.name}]]
+                </td>
                 <td>[[${blog.title}]]</td>
                 <td >
-                    <img th:src="@{/api/files/images(file=${blog.cover})}" width="15%" alt="asd">
+                    <img th:each="image:${blog.images}" th:src="@{/api/files/images(file=${image})}" alt="asd" style="display: inline" width="100px">
                 </td>
                 <td>[[${blog.content}]]</td>
                 <th class="text-center">
                     <button type="button"
                             th:data-id="${blog.id}" th:data-title="${blog.title}"
-                            th:data-categoryID="${blog.categoryId}"
-                            th:data-cover="${blog.cover}" th:data-content="${blog.content}"
-                            onclick="showUpdateModal(this.getAttribute('data-id'),this.getAttribute('data-title'),
-                                this.getAttribute('data-cover'),this.getAttribute('data-content'),this.getAttribute('data-categoryID'))"
+                            th:data-categoryID="${blog.categoryId}" th:data-content="${blog.content}"
+                            onclick="showUpdateModal(this.getAttribute('data-id'),this.getAttribute('data-title')
+                                ,this.getAttribute('data-content'),this.getAttribute('data-categoryID'))"
                             class="btn btn-primary" id="edit"
                             data-bs-toggle="modal" data-bs-target="#myModal">
                         Edit
@@ -52,10 +64,13 @@
             </tr>
             </tbody>
         </table>
-        <button type="submit" data-bs-toggle="modal" data-bs-target="#myModal"
-                onclick="showCreateModal()" id="create" class="btn btn-primary">Create</button>
-        <button type="button" id="btnDelete" class="btn btn-danger">Delete</button>
     </div>
+    <button type="submit" data-bs-toggle="modal" data-bs-target="#myModal"
+            onclick="showCreateModal()" id="create" class="btn btn-primary">Create
+    </button>
+    <button th:if="${blogs.size()} != 0" type="button" id="btnDelete" class="btn btn-danger">Delete</button>
+
+
 </div>
 <!-- The Modal -->
 <div class="modal fade" id="myModal">
@@ -70,37 +85,47 @@
 
             <!-- Modal body -->
             <div class="modal-body">
-                <form id="file-upload-form" name="blogForm">
-                    <select id="categoryId" class="form-select" >
+                <form id="file-upload-form" name="blogForm" th:object="${blog1}">
+                    <select th:field="*{categoryId}" name="categoryId" id="categoryId" class="form-select mb-3 mt-3">
                         <option value="">Choose category</option>
                         <option th:each="category : ${categories}"
-                            th:value="${category.id}"
-                        >[[${category.name}]]</option>
+                                th:value="${category.id}"
+                        >[[${category.name}]]
+                        </option>
                     </select>
                     <div class="mb-3 mt-3">
+                        <i th:errors="*{categoryId}"></i>
+                    </div>
+                    <div class="mb-3 mt-3">
                         <label for="title" class="form-label">Title:</label>
-                        <input type="text" class="form-control" id="title" placeholder="Enter title" name="title">
+                        <input th:field="*{title}" type="text" class="form-control" id="title" placeholder="Enter title" name="title">
+                        <div>
+                            <i th:errors="*{title}"></i>
+                        </div>
                     </div>
+
                     <div class="mb-3">
-                        <label for="file" class="form-label">Cover:</label>
-                        <input id="file" type="file" accept="image/*">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">
-                            <img src="#" alt="" srcset="">
-                        </label>
+                        <label for="files" class="form-label">Cover:</label>
+                        <input th:field="*{cover}" name="cover" id="files" type="file" multiple>
+                        <div>
+                            <i th:errors="*{cover}"></i>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="content" class="form-label">Content:</label>
-                        <textarea class="form-control" id="content" rows="5"  name="content"> </textarea>
+                        <textarea th:field="*{content}" class="form-control" id="content" rows="5" name="content"> </textarea>
+                        <div>
+                            <i th:errors="*{content}"></i>
+                        </div>
                     </div>
-                        <input type="hidden" id="id" name="id">
+                    <input type="hidden" id="id" name="id">
                     <button type="submit" id="btnSaveOrUpdate" class="btn btn-primary">Create</button>
                 </form>
             </div>
 
         </div>
     </div>
+    <h2>[[${message}]]</h2>
 </div>
 
 <script>
@@ -110,13 +135,33 @@
     const content = document.querySelector('#content');
     const categoryId = document.querySelector('#categoryId');
 
-    function showUpdateModal (blogId, blogTitle, blogCover, blogContent, categoryid) {
+    // const search = document.querySelector('#search');
+    function search() {
+        const categoryId = document.querySelector('#categories').value;
+        $.ajax({
+            url: 'http://localhost:1997/index?cateId=' + categoryId,
+            type: 'GET',
+            success: function (result) {
+                window.location.href = 'http://localhost:1997/index?cateId=' + categoryId;
+            },
+            error: function (error) {
+                swal.fire({
+                    title: "Lỗi!",
+                    text: "Tim kiem that thất bại!",
+                    icon: "error",
+                });
+            }
+        });
+    }
+
+    function showUpdateModal(blogId, blogTitle, blogContent, categoryid) {
         id.value = blogId;
         title.value = blogTitle;
         content.value = blogContent;
         categoryId.value = categoryid;
         saveOrUpdate.innerText = "Update";
     }
+
     function showCreateModal() {
         id.value = "";
         title.value = "";
@@ -126,23 +171,13 @@
     }
 
     $(document).ready(function () {
-        // bind form submit event
         $("#file-upload-form").on("submit", function (e) {
             // cancel the default behavior
             e.preventDefault();
-            var formData = new FormData();
-
-            formData.append("file", document.forms["blogForm"].file.files[0]);
-            formData.append('blog', new Blob([JSON.stringify({
-                "title": document.getElementById("title").value,
-                "id": document.getElementById("id").value,
-                "content": document.getElementById("content").value,
-                "categoryId": document.getElementById("categoryId").value
-            })], {
-                type: "application/json"
-            }));
-
-            if(saveOrUpdate.innerText == "Save") {
+            let form = $('#file-upload-form')[0];
+            let formData = new FormData(form);
+            console.log(form);
+            if (saveOrUpdate.innerText == "Save") {
                 (async () => {
                     const {value: formValues} = await Swal.fire({
                         title: 'Thêm blog ngay?',
@@ -162,7 +197,7 @@
                     }
 
                 })()
-            }else if(saveOrUpdate.innerText == "Update") {
+            } else if (saveOrUpdate.innerText == "Update") {
                 (async () => {
                     const {value: formValues} = await Swal.fire({
                         title: 'Update blog ngay?',
@@ -177,7 +212,7 @@
                         }
                     })
                     if (formValues) {
-                        updateBlog( formData);
+                        updateBlog(formData);
                     }
                 })()
             }
@@ -186,25 +221,27 @@
     });
 
     function createBlog(data) {
-        console.log(data)
         $.ajax({
             url: 'http://localhost:1997/api/create',
             enctype: 'multipart/form-data',
             type: 'POST',
+            data: data,
             contentType: false,
             processData: false,
-            data: data,
+
             success: function (result) {
+                console.log([result])
                 Swal.fire({
                     title: 'Thêm thành công!',
                     icon: "success",
                     showConfirmButton: false,
                     timer: 1500
                 }).then(() => {
-                    window.location.href = "http://localhost:1997/index";
+                    // window.location.href = "http://localhost:1997/index";
                 })
             },
             error: function (error) {
+                console.log(error)
                 swal.fire({
                     title: "Lỗi!",
                     text: "Thêm thất bại!",
@@ -216,9 +253,9 @@
 
     function updateBlog(data) {
         $.ajax({
-            url: 'http://localhost:1997/api/create',
+            url: 'http://localhost:1997/api/update',
             enctype: 'multipart/form-data',
-            type: 'POST',
+            type: 'PUT',
             contentType: false,
             processData: false,
             data: data,
@@ -241,20 +278,21 @@
             }
         });
     }
+
     ///////////////
 
     $("#btnDelete").click(function () {
         var ids = $('input[type=checkbox]:checked').map(function () {
             return $(this).val();
         }).get();
-        if(typeof ids === "undefined" || ids.length <= 0) {
+        if (typeof ids === "undefined" || ids.length <= 0) {
             Swal.fire({
                 icon: 'error',
                 title: 'Checked to blog',
                 showConfirmButton: false,
                 timer: 1500
             })
-        }else {
+        } else {
             deleteBlog(ids);
         }
     });
@@ -286,7 +324,7 @@
                     success: function (result) {
                         swalWithBootstrapButtons.fire({
                             icon: 'success',
-                            title: 'Your work has been saved',
+                            title: 'Xoa thanh cong',
                             showConfirmButton: false,
                             timer: 1500
                         }).then((value) => {
@@ -308,7 +346,7 @@
                     'error'
                 )
             }
-        })
+        });
     }
 
 </script>

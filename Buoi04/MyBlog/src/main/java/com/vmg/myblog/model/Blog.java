@@ -22,11 +22,11 @@ public class Blog implements Serializable {
     @Column
     @NotBlank(message = "Title is empty")
     private String title;
-    @Column
-    private String cover;
     @Column(columnDefinition = "TEXT")
     private String content;
     @ManyToOne
     private Category category;
-
+    @JsonIgnore
+    @OneToMany(mappedBy = "blog")
+    private List<ImageBlog> imageBlogs;
 }
