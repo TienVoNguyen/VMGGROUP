@@ -1,5 +1,6 @@
 package com.vmg.myblog.service.impl;
 
+import com.vmg.myblog.exception.FileNullException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -11,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -53,6 +55,11 @@ public class FileManagerService {
 
     public List<String> save(String folder, MultipartFile[] files) {
         List<String> filenames = new ArrayList<>();
+        if(Arrays.stream(files).toList().size() <=1) {
+            if (Arrays.stream(files).toList().get(0).getSize() <=0) {
+                throw new FileNullException(400, "File can't not null");
+            }
+        }
         for( MultipartFile file: files) {
             String name = System.currentTimeMillis() + file.getOriginalFilename();
             String filename = Integer.toHexString(name.hashCode()) + name.substring(name.lastIndexOf("."));

@@ -94,28 +94,28 @@
                         </option>
                     </select>
                     <div class="mb-3 mt-3">
-                        <i th:errors="*{categoryId}"></i>
+                        <span id="error-categoryId" class="text-danger"></span>
                     </div>
                     <div class="mb-3 mt-3">
                         <label for="title" class="form-label">Title:</label>
                         <input th:field="*{title}" type="text" class="form-control" id="title" placeholder="Enter title" name="title">
                         <div>
-                            <i th:errors="*{title}"></i>
+                            <span id="error-title" class="text-danger"></span>
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label for="files" class="form-label">Cover:</label>
-                        <input th:field="*{cover}" name="cover" id="files" type="file" multiple>
+                        <input name="cover" id="files" type="file" multiple>
                         <div>
-                            <i th:errors="*{cover}"></i>
+                            <span id="error-cover" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="mb-3">
                         <label for="content" class="form-label">Content:</label>
                         <textarea th:field="*{content}" class="form-control" id="content" rows="5" name="content"> </textarea>
-                        <div>
-                            <i th:errors="*{content}"></i>
+                        <div >
+                            <span id="error-content" class="text-danger"></span>
                         </div>
                     </div>
                     <input type="hidden" id="id" name="id">
@@ -129,6 +129,7 @@
 </div>
 
 <script>
+    let vo = document.querySelector.bind(document);
     const saveOrUpdate = document.querySelector('#btnSaveOrUpdate');
     const id = document.querySelector('#id');
     const title = document.querySelector('#title');
@@ -178,7 +179,7 @@
             let formData = new FormData(form);
             if (saveOrUpdate.innerText == "Save") {
                 (async () => {
-                    const value = await Swal.fire({
+                    const {value: formValues} = await Swal.fire({
                         title: 'Thêm blog ngay?',
                         showCancelButton: true,
                         confirmButtonText: 'Them Blog',
@@ -188,7 +189,7 @@
                         }
                     })
 
-                    if (value) {
+                    if (formValues) {
                         createBlog(formData);
                     }
 
@@ -226,7 +227,6 @@
             processData: false,
 
             success: function (result) {
-                console.log([result])
                 Swal.fire({
                     title: 'Thêm thành công!',
                     icon: "success",
@@ -237,7 +237,21 @@
                 })
             },
             error: function (error) {
-                console.log(error)
+                let errors = error.responseJSON;
+                errors.forEach(e => {
+                    if(e.field == "title") {
+                        vo('#error-title').innerText = e.field + " "  + e.defaultMessage;
+                    }
+                    if(e.field == "categoryId") {
+                        vo('#error-categoryId').innerText = e.field + " "  + e.defaultMessage;
+                    }
+                    if(e.field == "content") {
+                        vo('#error-content').innerText = e.field + " " + e.defaultMessage;
+                    }
+                    if(e.field == "files") {
+                        vo('#error-cover').innerText = e.field + " " + e.defaultMessage;
+                    }
+                });
                 swal.fire({
                     title: "Lỗi!",
                     text: "Thêm thất bại!",
