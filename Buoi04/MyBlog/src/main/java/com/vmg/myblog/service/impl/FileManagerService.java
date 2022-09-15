@@ -57,7 +57,7 @@ public class FileManagerService {
         List<String> filenames = new ArrayList<>();
         if(Arrays.stream(files).toList().size() <=1) {
             if (Arrays.stream(files).toList().get(0).getSize() <=0) {
-                throw new FileNullException(400, "File can't not null");
+                throw new FileNullException(400, "File can't not null","files", "blogForm");
             }
         }
         for( MultipartFile file: files) {

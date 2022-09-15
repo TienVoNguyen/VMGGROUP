@@ -8,4 +8,6 @@ import lombok.Getter;
 public class FileNullException extends RuntimeException{
     private int code;
     private String message;
+    private String field;
+    private String objectName;
 }
