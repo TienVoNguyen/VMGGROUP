@@ -177,6 +177,7 @@
             e.preventDefault();
             let form = $('#file-upload-form')[0];
             let formData = new FormData(form);
+            console.log([formData])
             if (saveOrUpdate.innerText == "Save") {
                 (async () => {
                     const {value: formValues} = await Swal.fire({
