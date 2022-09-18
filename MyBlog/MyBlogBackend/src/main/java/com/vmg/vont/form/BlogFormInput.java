@@ -1,4 +1,4 @@
-package com.vmg.vont.models.form;
+package com.vmg.vont.form;
 
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
-public class BlogForm {
+public class BlogFormInput {
     private Long id;
     @NotEmpty
     @Size(min = 3, max = 20)

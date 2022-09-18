@@ -1,10 +1,9 @@
 package com.vmg.vont.controller;
 
 import com.vmg.vont.models.dto.BlogDTO;
-import com.vmg.vont.models.form.BlogForm;
+import com.vmg.vont.form.BlogFormInput;
 import com.vmg.vont.service.IBlogService;
 import com.vmg.vont.service.ICategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -18,25 +17,29 @@ import java.util.Arrays;
 @RestController
 @RequestMapping("api")
 public class BlogAPI {
-    @Autowired
-    IBlogService blogService;
-    @Autowired
-    ICategoryService categoryService;
+    private final IBlogService blogService;
+    private final ICategoryService categoryService;
+
+    public BlogAPI(IBlogService blogService, ICategoryService categoryService) {
+        this.blogService = blogService;
+        this.categoryService = categoryService;
+    }
 
     @PostMapping(value = "create")
-    public ResponseEntity<?> save(@Valid @ModelAttribute BlogForm blogForm, BindingResult bindingResult) {
-        MultipartFile[] files = blogForm.getCover();
+    public ResponseEntity<?> save(@Valid @ModelAttribute BlogFormInput blogFormInput, BindingResult bindingResult) {
+        MultipartFile[] files = blogFormInput.getCover();
         if (Arrays.stream(files).toList().get(0).getSize() <=0) {
             bindingResult.addError(new FieldError("blogForm", "files","File can't not null"));
         }
         if(bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
         }
-        return ResponseEntity.ok(blogService.save(blogForm));
+        return ResponseEntity.ok(blogService.save(blogFormInput));
     }
-    @PutMapping(value = "update")
-    public BlogDTO update(@ModelAttribute BlogForm blogForm) {
-        return blogService.save(blogForm);
+    @PutMapping(value = "update/{id}")
+    public BlogDTO update(@ModelAttribute BlogFormInput blogFormInput, @PathVariable Long id) {
+        blogFormInput.setId(id);
+        return blogService.save(blogFormInput);
     }
 
     @DeleteMapping("delete")

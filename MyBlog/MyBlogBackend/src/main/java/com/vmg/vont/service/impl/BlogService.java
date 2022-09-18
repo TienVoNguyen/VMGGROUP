@@ -1,10 +1,8 @@
 package com.vmg.vont.service.impl;
 
 import com.vmg.vont.dao.IBlogDAO;
-import com.vmg.vont.dao.ICategoryDAO;
-import com.vmg.vont.dao.ICoverBlogDAO;
 import com.vmg.vont.models.dto.BlogDTO;
-import com.vmg.vont.models.form.BlogForm;
+import com.vmg.vont.form.BlogFormInput;
 import com.vmg.vont.models.pojo.Blog;
 import com.vmg.vont.models.pojo.Category;
 import com.vmg.vont.models.pojo.CoverBlog;
@@ -12,7 +10,6 @@ import com.vmg.vont.service.IBlogService;
 import com.vmg.vont.service.ICategoryService;
 import com.vmg.vont.service.ICoverBlogService;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,21 +17,24 @@ import java.util.List;
 
 @Service
 public class BlogService implements IBlogService {
-    @Autowired
-    IBlogDAO blogDAO;
-    @Autowired
-    ICategoryService categoryService;
-    @Autowired
-    private ModelMapper modelMapper;
-    @Autowired
-    FileManagerService fileManagerService;
-    @Autowired
-    ICoverBlogService coverBlogService;
+    private final IBlogDAO blogDAO;
+    private final ICategoryService categoryService;
+    private final ModelMapper modelMapper;
+    private final FileManagerService fileManagerService;
+    private final ICoverBlogService coverBlogService;
+
+    public BlogService(IBlogDAO blogDAO, ICategoryService categoryService, ModelMapper modelMapper, FileManagerService fileManagerService, ICoverBlogService coverBlogService) {
+        this.blogDAO = blogDAO;
+        this.categoryService = categoryService;
+        this.modelMapper = modelMapper;
+        this.fileManagerService = fileManagerService;
+        this.coverBlogService = coverBlogService;
+    }
 
     @Override
-    public BlogDTO save(BlogForm blogForm) {
-        BlogDTO blogDTO = modelMapper.map(blogForm, BlogDTO.class);
-        List<String> filenames = fileManagerService.save("images", blogForm.getCover());
+    public BlogDTO save(BlogFormInput blogFormInput) {
+        BlogDTO blogDTO = modelMapper.map(blogFormInput, BlogDTO.class);
+        List<String> filenames = fileManagerService.save("images", blogFormInput.getCover());
         Blog blog = convertToModel(blogDTO);
         blog = blogDAO.save(blog);
         for (String filename:filenames) {
@@ -60,6 +60,20 @@ public class BlogService implements IBlogService {
     public List<BlogDTO> findAll() {
         List<BlogDTO> blogDTOList = new ArrayList<>();
         List<Blog> blogList = blogDAO.findAll();
+        return getBlogDTOList(blogDTOList, blogList);
+    }
+
+    @Override
+    public Blog findById(Long id) {
+        return blogDAO.getReferenceById(id);
+    }
+    @Override
+    public List<BlogDTO> findByCategory(Long id) {
+        List<BlogDTO> blogDTOList = new ArrayList<>();
+        List<Blog> blogList = blogDAO.findByCategoryId(id);
+        return getBlogDTOList(blogDTOList, blogList);
+    }
+    private List<BlogDTO> getBlogDTOList(List<BlogDTO> blogDTOList, List<Blog> blogList) {
         for(Blog blog: blogList) {
             BlogDTO blogDTO = convertToDTO(blog);
             List<String> images = new ArrayList<>();
@@ -70,18 +84,6 @@ public class BlogService implements IBlogService {
             blogDTOList.add(blogDTO);
         }
         return blogDTOList;
-    }
-
-    @Override
-    public Blog findById(Long id) {
-        return blogDAO.getReferenceById(id);
-    }
-
-    private BlogDTO convertToDTO(Blog blog) {
-        BlogDTO blogDTO = modelMapper.map(blog, BlogDTO.class);
-
-        blogDTO.setCategoryCode(blog.getCategory().getCode());
-        return blogDTO;
     }
 
     private Blog convertToModel(BlogDTO blogDTO) {
@@ -98,19 +100,11 @@ public class BlogService implements IBlogService {
         return blog;
     }
 
-    @Override
-    public List<BlogDTO> findByCategory(Long id) {
-        List<BlogDTO> blogDTOList = new ArrayList<>();
-        List<Blog> blogList = blogDAO.findByCategoryId(id);
-        for(Blog blog: blogList) {
-            BlogDTO blogDTO = convertToDTO(blog);
-            List<String> images = new ArrayList<>();
-            for (CoverBlog coverBlog: blog.getCoverBlogs()) {
-                images.add(coverBlog.getCoverName());
-            }
-            blogDTO.setCoverNameList(images);
-            blogDTOList.add(blogDTO);
-        }
-        return blogDTOList;
+    private BlogDTO convertToDTO(Blog blog) {
+        BlogDTO blogDTO = modelMapper.map(blog, BlogDTO.class);
+
+        blogDTO.setCategoryCode(blog.getCategory().getCode());
+        return blogDTO;
     }
+
 }
