@@ -1,8 +1,9 @@
 package com.vmg.vont.service.impl;
 
 import com.vmg.vont.dao.IBlogDAO;
+import com.vmg.vont.payload.response.BlogResponse;
 import com.vmg.vont.models.dto.BlogDTO;
-import com.vmg.vont.form.BlogFormInput;
+import com.vmg.vont.payload.request.BlogRequest;
 import com.vmg.vont.models.pojo.Blog;
 import com.vmg.vont.models.pojo.Category;
 import com.vmg.vont.models.pojo.CoverBlog;
@@ -10,6 +11,8 @@ import com.vmg.vont.service.IBlogService;
 import com.vmg.vont.service.ICategoryService;
 import com.vmg.vont.service.ICoverBlogService;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -32,7 +35,7 @@ public class BlogService implements IBlogService {
     }
 
     @Override
-    public BlogDTO save(BlogFormInput blogFormInput) {
+    public BlogDTO save(BlogRequest blogFormInput) {
         BlogDTO blogDTO = modelMapper.map(blogFormInput, BlogDTO.class);
         List<String> filenames = fileManagerService.save("images", blogFormInput.getCover());
         Blog blog = convertToModel(blogDTO);
@@ -58,9 +61,20 @@ public class BlogService implements IBlogService {
 
     @Override
     public List<BlogDTO> findAll() {
-        List<BlogDTO> blogDTOList = new ArrayList<>();
+
         List<Blog> blogList = blogDAO.findAll();
-        return getBlogDTOList(blogDTOList, blogList);
+        return getBlogDTOList( blogList);
+    }
+
+    @Override
+    public BlogResponse findAll(Pageable pageable) {
+        Page<Blog> blogPage = blogDAO.findAll(pageable);
+        BlogResponse blogFormOutput = new BlogResponse();
+        blogFormOutput.setTotalItems(blogPage.getTotalElements());
+        blogFormOutput.setTotalPages(blogPage.getTotalPages());
+        blogFormOutput.setCurrentPage(blogPage.getNumber());
+        blogFormOutput.setBlogDTOList(getBlogDTOList(blogPage.getContent()));
+        return blogFormOutput;
     }
 
     @Override
@@ -69,11 +83,12 @@ public class BlogService implements IBlogService {
     }
     @Override
     public List<BlogDTO> findByCategory(Long id) {
-        List<BlogDTO> blogDTOList = new ArrayList<>();
+
         List<Blog> blogList = blogDAO.findByCategoryId(id);
-        return getBlogDTOList(blogDTOList, blogList);
+        return getBlogDTOList( blogList);
     }
-    private List<BlogDTO> getBlogDTOList(List<BlogDTO> blogDTOList, List<Blog> blogList) {
+    private List<BlogDTO> getBlogDTOList( List<Blog> blogList) {
+        List<BlogDTO> blogDTOList = new ArrayList<>();
         for(Blog blog: blogList) {
             BlogDTO blogDTO = convertToDTO(blog);
             List<String> images = new ArrayList<>();
@@ -94,6 +109,7 @@ public class BlogService implements IBlogService {
                 fileManagerService.delete("images", coverBlog.getCoverName());
             }
             blog.setId(oldBlog.getId());
+            blog.setCreateDate(oldBlog.getCreateDate());
         }
         Category category = categoryService.findOneByCode(blogDTO.getCategoryCode());
         blog.setCategory(category);

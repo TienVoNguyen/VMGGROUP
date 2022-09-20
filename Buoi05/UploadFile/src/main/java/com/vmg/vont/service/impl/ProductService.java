@@ -3,7 +3,6 @@ package com.vmg.vont.service.impl;
 import com.vmg.vont.Models.Product;
 import com.vmg.vont.dao.IProductDAO;
 import com.vmg.vont.service.IProductService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

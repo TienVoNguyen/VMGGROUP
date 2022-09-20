@@ -1,9 +1,13 @@
 package com.vmg.vont.controller;
 
+import com.vmg.vont.payload.response.BlogResponse;
 import com.vmg.vont.models.dto.BlogDTO;
-import com.vmg.vont.form.BlogFormInput;
+import com.vmg.vont.payload.request.BlogRequest;
 import com.vmg.vont.service.IBlogService;
 import com.vmg.vont.service.ICategoryService;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -11,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.util.Arrays;
 
 @CrossOrigin("*")
 @RestController
@@ -25,10 +28,18 @@ public class BlogAPI {
         this.categoryService = categoryService;
     }
 
+    @GetMapping("blogList")
+    public ResponseEntity<BlogResponse> getAll(@RequestParam(defaultValue = "0") int page,
+                                               @RequestParam(defaultValue = "2") int size)
+    {
+        Pageable pageable = PageRequest.of(page, size);
+        return new ResponseEntity<>(blogService.findAll(pageable), HttpStatus.OK);
+    }
+
     @PostMapping(value = "create")
-    public ResponseEntity<?> save(@Valid @ModelAttribute BlogFormInput blogFormInput, BindingResult bindingResult) {
+    public ResponseEntity<?> save(@Valid @ModelAttribute BlogRequest blogFormInput, BindingResult bindingResult) {
         MultipartFile[] files = blogFormInput.getCover();
-        if (Arrays.stream(files).toList().get(0).getSize() <=0) {
+        if (files == null) {
             bindingResult.addError(new FieldError("blogForm", "files","File can't not null"));
         }
         if(bindingResult.hasErrors()) {
@@ -36,8 +47,9 @@ public class BlogAPI {
         }
         return ResponseEntity.ok(blogService.save(blogFormInput));
     }
+
     @PutMapping(value = "update/{id}")
-    public BlogDTO update(@ModelAttribute BlogFormInput blogFormInput, @PathVariable Long id) {
+    public BlogDTO update(@ModelAttribute BlogRequest blogFormInput, @PathVariable Long id) {
         blogFormInput.setId(id);
         return blogService.save(blogFormInput);
     }

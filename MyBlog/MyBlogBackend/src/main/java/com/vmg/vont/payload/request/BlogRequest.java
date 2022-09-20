@@ -1,4 +1,4 @@
-package com.vmg.vont.form;
+package com.vmg.vont.payload.request;
 
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
-public class BlogFormInput {
+public class BlogRequest {
     private Long id;
     @NotEmpty
     @Size(min = 3, max = 20)
@@ -18,5 +18,5 @@ public class BlogFormInput {
     @NotEmpty
     private String content;
     @NotNull
-    private Long categoryId;
+    private String categoryCode;
 }

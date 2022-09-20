@@ -23,7 +23,5 @@ public class BlogDTO extends BaseDTO<BlogDTO> implements Serializable {
     private String title;
     @NotBlank
     private String categoryCode;
-    @NonNull
-    private Long userId;
     private List<String> coverNameList;
 }

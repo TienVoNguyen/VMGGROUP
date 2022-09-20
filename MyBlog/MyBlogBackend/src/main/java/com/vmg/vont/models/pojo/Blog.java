@@ -23,9 +23,6 @@ public class Blog extends BasePOJO {
     @ManyToOne
     private Category category;
 
-    @ManyToOne
-    private User user;
-
     @JsonIgnore
     @OneToMany(mappedBy = "blog")
     private List<CoverBlog> coverBlogs;
