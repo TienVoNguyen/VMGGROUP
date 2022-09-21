@@ -1,0 +1,12 @@
+ Website https://www.airbnb.com/host/homes
+ 1. Web one page không có header.
+ 2. Content:
+	1. Slider
+	2. Find out
+	3. Map
+	4. Benefit Slider
+	5. Help
+	6. Questions
+	7. Air cover
+	8. Slider
+3. Footer
