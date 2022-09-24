@@ -7,7 +7,7 @@
 
     <p><Strong>{{text}}</Strong></p>
 
-    <input v-model="text">
+    <input type="text" v-model="text">
     <br><br>
     <strong>Sex : </strong>
     <input type="radio" id="m" value="male"
@@ -33,7 +33,7 @@ export default {
   },
   data() {
     return {
-      text: 'Hi',
+      text: 'Hi, I\'m Nguyen Tien Vo',
       sex: 'male'
     }
   }
