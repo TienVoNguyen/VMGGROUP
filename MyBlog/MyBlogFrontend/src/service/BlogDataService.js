@@ -1,8 +1,8 @@
 import http from "../commons/http-common";
 
 class TodoDataService {
-    getAll() {
-        return http.get("/blogList");
+    getAll(params) {
+        return http.get("/blogList", { params });
     }
 
     get(id) {

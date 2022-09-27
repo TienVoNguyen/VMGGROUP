@@ -1,29 +1,44 @@
 <template>
-  <el-table
-      :data="blogList"
-      border
-      style="width: 100%">
-    <el-table-column
-        prop="title"
-        label="Title"
-        width="180">
-    </el-table-column>
-    <el-table-column
-        prop="content"
-        label="Content"
-        width="180">
-    </el-table-column>
-    <el-table-column
-        prop="categoryCode"
-        label="Category Code">
-    </el-table-column>
-    <el-table-column
-        label="Cover">
-      <template v-slot="scope">
-        <img width="50px" v-for="(cover, index) in scope.row.coverNameList" :key="index" v-bind:src="'http://localhost:1997/api/files/images?file='+cover" alt="anh">
-      </template>
-    </el-table-column>
-  </el-table>
+  <el-container>
+    <el-main>
+      <el-table
+          :data="blogList"
+          border
+          style="width: 100%">
+        <el-table-column
+            prop="title"
+            label="Title"
+            width="180">
+        </el-table-column>
+        <el-table-column
+            prop="content"
+            label="Content"
+            width="180">
+        </el-table-column>
+        <el-table-column
+            prop="categoryCode"
+            label="Category Code">
+        </el-table-column>
+        <el-table-column
+            label="Cover">
+          <template v-slot="scope">
+            <img width="50px" v-for="(cover, index) in scope.row.coverNameList" :key="index"
+                 v-bind:src="'http://localhost:1997/api/files/images?file='+cover" alt="anh">
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-main>
+    <el-footer>
+      <el-pagination
+          background
+          layout="prev, pager, next"
+          :total="total"
+          :page-count="totalPages"
+          :current-page="currentIndex"
+          :page-size="blogList.length">
+      </el-pagination>
+    </el-footer>
+  </el-container>
 </template>
 
 <script>
@@ -36,7 +51,9 @@ export default {
       blogList: [],
       currentBlog: null,
       currentIndex: -1,
-      title: ""
+      title: "",
+      total: 5,
+      totalPages: 3,
     }
   },
   methods: {
@@ -44,6 +61,9 @@ export default {
       BlogDataService.getAll()
           .then(response => {
             this.blogList = response.data.blogDTOList;
+            this.total = response.data.totalItems;
+            this.totalPages = response.data.totalPages;
+            this.currentIndex = response.data.currentPage + 1;
             console.log(response.data);
           })
           .catch(e => {
