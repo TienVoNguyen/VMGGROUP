@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
@@ -18,17 +19,16 @@ import javax.validation.Valid;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("api")
+@RequestMapping("api/blog")
 public class BlogAPI {
     private final IBlogService blogService;
-    private final ICategoryService categoryService;
 
-    public BlogAPI(IBlogService blogService, ICategoryService categoryService) {
+    public BlogAPI(IBlogService blogService) {
         this.blogService = blogService;
-        this.categoryService = categoryService;
     }
 
-    @GetMapping("blogList")
+    @GetMapping("")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<BlogResponse> getAll(@RequestParam(defaultValue = "0") int page,
                                                @RequestParam(defaultValue = "2") int size)
     {

@@ -8,14 +8,40 @@
       text-color="#fff"
       active-text-color="#ffd04b">
     <el-menu-item index="1">
-      <router-link to="/" class="nav-link">Home</router-link>
+      <router-link to="/" class="nav-link">
+        <i class="el-icon-s-home"></i>Home
+      </router-link>
     </el-menu-item>
-    <el-menu-item index="2" >
-      <router-link to="/blog-list" class="nav-link">Blog List</router-link>
+    <el-menu-item index="2">
+      <router-link to="/blog-list" class="nav-link">
+        <i class="el-icon-notebook-2"></i> List
+      </router-link>
     </el-menu-item>
     <el-menu-item index="3">
-      <router-link to="/add" class="nav-link">Add Blog</router-link>
+      <router-link to="/add" class="nav-link">
+        <i class="el-icon-circle-plus"></i>Add Blog
+      </router-link>
     </el-menu-item>
+    <template v-if="!currentUser">
+      <el-menu-item index="4" >
+        <router-link  to="/login" class="nav-link">
+          <i class="el-icon-circle-plus"></i>Signin
+        </router-link>
+      </el-menu-item>
+      <el-menu-item index="5">
+        <router-link to="/register" class="nav-link">
+          <i class="el-icon-circle-plus"></i>Signup
+        </router-link>
+      </el-menu-item>
+    </template>
+    <template v-if="currentUser">
+      <el-menu-item index="4">
+        <el-link type="danger" href @click.prevent="logOut" class="nav-link">
+          <b-icon icon="arrow-bar-right"></b-icon>
+          Logout
+        </el-link>
+      </el-menu-item>
+    </template>
   </el-menu>
 </template>
 <script>
@@ -27,9 +53,18 @@ export default {
       activeIndex2: '1'
     };
   },
+  computed: {
+    currentUser() {
+      return this.$store.state.auth.user;
+    }
+  },
   methods: {
     handleSelect(key, keyPath) {
       console.log(key, keyPath);
+    },
+    logOut() {
+      this.$store.dispatch('auth/logout');
+      this.$router.push('/login');
     }
   }
 }

@@ -1,9 +1,9 @@
 import http from "../commons/http-common";
 import {jsonRequest} from "@/commons/http-common";
 import authHeader from "@/service/auth-header";
-class BlogDataService {
-    getAll(params) {
-        return http.get("/blog", {params, headers: authHeader()});
+class CategoryDataService {
+    getAll() {
+        return http.get("/category", {headers: authHeader()});
     }
 
     get(id) {
@@ -13,7 +13,7 @@ class BlogDataService {
     create(data) {
         let fromData = new FormData(data);
         console.log(fromData);
-        return http.post("blog/create", fromData,{headers: authHeader()});
+        return http.post("blog/create", fromData);
     }
 
     update(id, data) {
@@ -21,7 +21,7 @@ class BlogDataService {
     }
 
     delete(data) {
-        return jsonRequest.delete("blog/delete", {headers: authHeader(data)});
+        return jsonRequest.delete("blog/delete", { data: data });
     }
 
     deleteAll() {
@@ -33,4 +33,4 @@ class BlogDataService {
     }
 }
 
-export default new BlogDataService();
+export default new CategoryDataService();
