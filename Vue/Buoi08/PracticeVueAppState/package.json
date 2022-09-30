@@ -1,5 +1,5 @@
 {
-  "name": "default-app",
+  "name": "practice-vue-app-state",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,10 +9,13 @@
   },
   "dependencies": {
     "axios": "^0.27.2",
+    "bootstrap": "^4.6.1",
+    "bootstrap-vue": "^2.22.0",
     "core-js": "^3.8.3",
     "element-ui": "^2.15.10",
     "vue": "^2.6.14",
-    "vue-router": "^3.6.5"
+    "vue-router": "^3.6.5",
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

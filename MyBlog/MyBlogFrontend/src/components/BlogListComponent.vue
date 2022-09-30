@@ -1,9 +1,20 @@
 <template>
   <el-container>
+    <el-header>
+      <el-select v-model="categoryCode" @change="findByCategoryCode()" placeholder="Select Category">
+        <el-option value="" label="Select Category"></el-option>
+        <el-option
+            v-for="item in categories"
+            :key="item.id"
+            :label="item.name"
+            :value="item.code">
+        </el-option>
+      </el-select>
+    </el-header>
     <el-main>
       <el-table
           ref="multipleTable"
-          :data="blogList.filter(data => !search || data.title.toLowerCase().includes(search.toLowerCase()))"
+          :data="this.categoryCode.length<=0?blogList.filter(data => !search || data.title.toLowerCase().includes(search.toLowerCase())):this.blogListCode"
           @selection-change="handleSelectionChange"
           border
           style="width: 100%">
@@ -90,6 +101,7 @@ export default {
   data() {
     return {
       blogList: [],
+      blogListCode: [],
       categories: [],
       currentBlog: null,
       currentIndex: -1,
@@ -99,7 +111,8 @@ export default {
       itemCount: 6,
       pageSizes: [2, 4, 6],
       multipleSelection: [],
-      search: ''
+      search: '',
+      categoryCode: ''
     }
   },
   methods: {
@@ -172,6 +185,13 @@ export default {
     //         console.log(e);
     //       });
     // },
+    findByCategoryCode() {
+      console.log(this.categoryCode)
+      this.blogListCode = this.blogList.filter((blog) => {
+        return this.categoryCode === blog.categoryCode
+      })
+    },
+
     handleEdit(index, row) {
       console.log(index, row);
     },

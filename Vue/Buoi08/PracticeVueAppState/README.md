@@ -1,4 +1,4 @@
-# default-app
+# Practice Vue App State
 
 ## Project setup
 ```
