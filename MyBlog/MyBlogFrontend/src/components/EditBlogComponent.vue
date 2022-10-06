@@ -37,7 +37,10 @@
 </template>
 
 <script>
+import BlogDataService from "@/service/BlogDataService";
+import CategoryDataService from "@/service/CategoryDataService";
 export default {
+
   name: "EditBlogComponent",
   data() {
     return {
